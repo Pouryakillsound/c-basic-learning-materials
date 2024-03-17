@@ -1,60 +1,71 @@
+/*
+* This code may not be that proper for general learning but it helped me a lot 
+* This program only supports a-z and not capital letter
+* Just a simple trie implementation with which contains no data
+* Memory leak is checked with valgrind and there was nothing captured as leak: 19 allocs, 19 frees, 4,912 bytes allocated
+* You can follow this link for original implementation: https://www.geeksforgeeks.org/trie-delete/ but here we will free all nodes too
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdbool.h>
 
-#define ARRAY_SIZE(a) sizeof(a)/sizeof(a[0]) 
-#define ALPHABET_SIZE (26)
-#define CHAR_TO_INDEX(c) ((int)c - (int)'a')
+#define ARRAY_SIZE(a) sizeof(a)/sizeof(a[0]) // return size of an array by a simple formula
+#define ALPHABET_SIZE (26) // size of children of tries
+#define CHAR_TO_INDEX(c) ((int)c - (int)'a') // returns 0-25 index based on alphabets from a-z and not capitals
 
 // A pretty usual and simple struct for trie
-typedef struct TrieNode
+typedef struct TrieNode //
 {
         struct TrieNode *children[ALPHABET_SIZE];
         bool isEndOfWord;
 }
 node;
 
-// function for returning a pointer to a node of trie with all NULL pointer
+// Function for returning a pointer to a node of trie with all NULL pointer
 node *getNode(void)
 {
-        node *n = NULL;
-        n = malloc(sizeof(node));
+        node *n = NULL; // initializing a pointer to NULL
+        n = malloc(sizeof(node)); // giving it some space
         
-        if (n)
+        if (n) // if it is not NULL
         {
                 int i;
                 n->isEndOfWord = false;
                 for (i = 0; i < ALPHABET_SIZE; i++)
-                n->children[i] = NULL;
+                n->children[i] = NULL; // deleting all GARBAGE VALUES and setting childrens to NULL
         }
-        return n;
+        return n; // returning a fresh and new trie
 }
 
+// Function for inserting a key into trie data structure
 void insert (node *root, const char *key)
 {
         int level;
         int length = strlen(key);
         int index;
         node *n = root;
-        for (level = 0; level < length; level++)
+        for (level = 0; level < length; level++) // walking throughout the word
         {
                 index = CHAR_TO_INDEX(key[level]);
-                if (!n->children[index])
-                        n->children[index] = getNode();
-                n = n->children[index];
+                if (!n->children[index]) // if NULL
+                        n->children[index] = getNode(); // Giving it a fresh node
+                n = n->children[index]; // going to the next level
         }
-        n ->isEndOfWord = true;
+        n -> isEndOfWord = true; // At the end assign true to isEndOfWord to indicate that word ends here and this is it 
 }
 
+
+// Funtion for searching a key in tries
 bool search(node *root, const char *key)
 {
         int level; // used for looping over the chars of the string in the bellow loop
         int length = strlen(key); // 
         int index;
         node *n = root;
-        for (level=0; level<length; level++)
+        for (level=0; level<length; level++) // walking throughout the word
         {
                 index = CHAR_TO_INDEX(key[level]);
 
@@ -65,6 +76,7 @@ bool search(node *root, const char *key)
         return (n->isEndOfWord);
 }
 
+// At the end we would have to free all malloced valued in order to have a pretty memory management
 bool free_all_tries(node *root)
 {
         node *n = root;
@@ -84,8 +96,8 @@ bool free_all_tries(node *root)
 
 
 int main()
-{
-        char keys[][8] = {"the", "a", "there", "answer", "any",
+{       // Pay attention to keys NO CAPITAL LETTER
+        char keys[][8] = {"the", "a", "there", "answer", "any", 
                      "by", "bye", "their"};
         char output[][32] = {"Not present in trie", "Present in trie"};
 
@@ -93,7 +105,6 @@ int main()
         int i;
         for (i=0; i < ARRAY_SIZE(keys); i++)
                 insert(root, keys[i]);
-        printf("%li\n", ARRAY_SIZE(keys));
 
         printf("%s ---- %s \n", "the", output[search(root, "the")]); // an example of searching
         free_all_tries(root); // freeing all nodes chained together
