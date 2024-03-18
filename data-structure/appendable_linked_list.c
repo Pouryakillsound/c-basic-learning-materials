@@ -67,6 +67,7 @@ int main()
                 printf("%s\n", ptr->data); // In the output we expect to see them in order (not sorted only from first to last) because we are appending
         }
         free_list(list); // Frees all variables
+        return 0;
 }
 
 

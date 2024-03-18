@@ -96,7 +96,8 @@ bool free_all_tries(node *root)
 
 
 int main()
-{       // Pay attention to keys NO CAPITAL LETTER
+{       
+        // Pay attention to keys NO CAPITAL LETTER
         char keys[][8] = {"the", "a", "there", "answer", "any", 
                      "by", "bye", "their"};
         char output[][32] = {"Not present in trie", "Present in trie"};
@@ -109,5 +110,5 @@ int main()
         printf("%s ---- %s \n", "the", output[search(root, "the")]); // an example of searching
         free_all_tries(root); // freeing all nodes chained together
         free(root); // freeing the core root
-
+        return 0;
 }
