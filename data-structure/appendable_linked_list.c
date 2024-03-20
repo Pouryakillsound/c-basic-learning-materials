@@ -1,6 +1,6 @@
 /*
 * An appendable linked list.  
-* written based by cs50 harvard course
+* written based by cs50 harvard course with an extra free_list func
 */
 
 #include <stdio.h>
@@ -22,7 +22,7 @@ node;
 bool free_list(node *root)
 {       
         if (!root) return false;
-        if (root)
+        else
         {
                 free_list(root->next); // Recursive call to free all the nodes following 
                 free(root);
