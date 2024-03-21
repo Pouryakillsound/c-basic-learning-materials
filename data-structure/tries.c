@@ -41,8 +41,9 @@ node *getNode(void)
 }
 
 // Function for inserting a key into trie data structure
-void insert (node *root, const char *key)
+bool insert (node *root, const char *key)
 {
+        if (!root) return false;
         int level;
         int length = strlen(key);
         int index;
@@ -55,6 +56,7 @@ void insert (node *root, const char *key)
                 n = n->children[index]; // going to the next level
         }
         n -> isEndOfWord = true; // At the end assign true to isEndOfWord to indicate that word ends here and this is it 
+        return true;
 }
 
 
@@ -77,20 +79,16 @@ bool search(node *root, const char *key)
 }
 
 // At the end we would have to free all malloced valued in order to have a pretty memory management
-bool free_all_tries(node *root)
+bool free_all(node *root)
 {
         node *n = root;
-        if (!n) // if the coming pointer contains NULL then close the function by returning false
-                return false;
-        else
+        if (!n) return false;// if the coming pointer contains NULL then close the function by returning false
+        // if block is not pointing to NULL
+        for (int i=0; i < ALPHABET_SIZE; i++)
         {
-        for (int i = 0; i < ALPHABET_SIZE; i++) // looping over all the pointers of the n
-                if (n->children[i]) // if block is not pointing to NULL
-                {
-                        free_all_tries(n->children[i]); // recursively freeing all the i'th children's nodes
-                        free(n->children[i]); // free the i'th children itself
-                }
+                free_all(n->children[i]); // recursively freeing all the i'th children's nodes     
         }
+        free(n);
         return true; // after all return true which is a sign of success
 }
 
@@ -100,15 +98,17 @@ int main()
         // Pay attention to keys NO CAPITAL LETTER
         char keys[][8] = {"the", "a", "there", "answer", "any", 
                      "by", "bye", "their"};
-        char output[][32] = {"Not present in trie", "Present in trie"};
+        char output[][32] = {"Not present in trie", "Present in trie"}; // Used for result of searching
 
         node *root = getNode();
         int i;
         for (i=0; i < ARRAY_SIZE(keys); i++)
                 insert(root, keys[i]);
 
-        printf("%s ---- %s \n", "the", output[search(root, "the")]); // an example of searching
-        free_all_tries(root); // freeing all nodes chained together
-        free(root); // freeing the core root
+        /* Examples of searching*/
+        printf("%s ---- %s \n", "the", output[search(root, "the")]);
+        printf("%s ---- %s \n", "the", output[search(root, "USA")]);
+
+        free_all(root); // Freeing all nodes
         return 0;
 }
